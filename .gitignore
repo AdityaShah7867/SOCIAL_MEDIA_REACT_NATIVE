@@ -1,0 +1,10 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore .env files
+*.env
+
+# add uplaoads folder to the .gitignore
+uploads/
+```
+
