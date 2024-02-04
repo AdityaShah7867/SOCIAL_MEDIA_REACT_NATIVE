@@ -1,49 +1,58 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import API_CONFIG from "../constants/API_CONFIG";
 
 const Friends = () => {
-  const users = [
-    {
-      id: 1,
-      name: "Sahil Chalke",
-      image: "https://media.licdn.com/dms/image/D4D03AQEFces88mnw5A/profile-displayphoto-shrink_100_100/0/1703794785287?e=1710374400&v=beta&t=ExzF-vEP-5Okc2OxEMxLBHDpUkPgOFJWdGDf9bZjhk4",
-    },
-    {
-      id: 2,
-      name: "Karan Gandhi",
-      image: "https://media.licdn.com/dms/image/D4D03AQE4p-SppOJM7A/profile-displayphoto-shrink_200_200/0/1663963216759?e=1710374400&v=beta&t=h6P1BKhp-a24qs27S5EhqFer7PRjrg9pUFp-T7m_19s",
-    },
-    {
-      id: 3,
-      name: "Rehman Khan",
-      image: "https://avatars.githubusercontent.com/u/98531038?s=48&v=4",
-    },
-    {
-      id: 4,
-      name: "Abhay Upadhyaya",
-      image: "https://media.licdn.com/dms/image/D4D03AQGwJj8FEdNtEw/profile-displayphoto-shrink_100_100/0/1688519205672?e=1710374400&v=beta&t=ou0rm5l4LJ4Vg6X9meYxVLzg5pEwb7V-uxGRxM9wt1c",
-    },
-    {
-      id: 5,
-      name: "Parth Patil",
-      image: "https://i.stack.imgur.com/l60Hf.png",
-    },
-    // Add more users as needed
-  ];
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        console.log('Fetching users...');
+        const response = await fetch(`${API_CONFIG.baseUrl}/auth/getAllUsers`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${API_CONFIG.authToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setUsers(data.users);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        console.log('Finally fetched user data!');
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
     <ScrollView style={styles.bgc}>
-    <View style={styles.container}>
-      {users.map((user) => (
-        <View key={user.id} style={styles.userContainer}>
-          <Image source={{ uri: user.image }} style={styles.userImage} />
-          <Text style={styles.userName}>{user.name}</Text>
-          <TouchableOpacity style={styles.connectButton}>
-            <Text style={styles.connectButtonText}>Connect</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
-    </View>
+      <View style={styles.container}>
+        {loading ? (
+          <Text>Loading...</Text>
+        ) : (
+          users.map((user) => (
+            <View key={user._id} style={styles.userContainer}>
+              <Image source={{ uri: user.avatar.url }} style={styles.userImage} />
+              <Text style={styles.userName}>{user.username}</Text>
+              <Text style={styles.bio}>{user.bio}</Text>
+              <TouchableOpacity style={styles.connectButton}>
+                <Text style={styles.connectButtonText}>Connect</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
+      </View>
     </ScrollView>
   );
 };
@@ -57,12 +66,11 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
-  bgc:{
+  bgc: {
     backgroundColor: "#fff",
   },
   userContainer: {
-    width: "48%", // Adjust as needed based on your layout
-    // backgroundColor: "#f0f0f0",
+    width: "48%",
     borderWidth: 1,
     borderColor: "#d1d5db",
     padding: 10,
@@ -80,6 +88,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 5,
+  },
+  bio:{
+    fontSize: 14,
+    marginBottom: 10,
   },
   connectButton: {
     backgroundColor: "#3b82f6",
