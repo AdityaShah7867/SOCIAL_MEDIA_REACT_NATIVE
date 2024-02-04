@@ -46,7 +46,7 @@ const HomeScreen = () => {
         <Text>Loading...</Text>
       ) : (
         postData.map(post => (
-          <Post key={post._id} data={post} />
+          <Post key={post._id} id={post._id} data={post} />
         ))
       )}
     </View>

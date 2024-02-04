@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,9 +8,29 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import API_CONFIG from "../constants/API_CONFIG"; // Adjust the path accordingly
 
 const Post = ({ data }) => {
-  const { author, content, likes, comments, createdAt, media } = data;
+  const { _id, author, content, likes, comments, createdAt, media } = data;
+  const [isLiked, setIsLiked] = useState(false);
+
+  const handleLike = async () => {
+    try {
+      const response = await fetch(`${API_CONFIG.baseUrl}/likes/likeDislikePost/${_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_CONFIG.authToken}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error('Error liking/disliking post:', error);
+    }
+  };
 
   return (
     <ScrollView>
@@ -34,9 +54,9 @@ const Post = ({ data }) => {
 
         {/* Like, Comment, Share Buttons */}
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleLike}>
             <Ionicons name="heart-outline" size={24} color="black" />
-            <Text style={styles.buttonText}>{likes.length}Likes</Text>
+            <Text style={styles.buttonText}>{likes.length} Likes</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.button}>

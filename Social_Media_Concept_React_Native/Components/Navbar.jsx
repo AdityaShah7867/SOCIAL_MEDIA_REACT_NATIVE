@@ -1,8 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Make sure to install @expo/vector-icons
+import { useNavigation } from '@react-navigation/native';
 
 const Navbar = () => {
+
+  const navigation = useNavigation();
+
+  const navigateToScreen = (screenName) => {
+    navigation.navigate(screenName);
+  };
+
   return (
     <View style={styles.container}>
       {/* Left Circle with Profile Image */}
@@ -23,7 +31,7 @@ const Navbar = () => {
       </View>
 
       {/* Right Chat Icon */}
-      <TouchableOpacity style={styles.rightIcon}>
+      <TouchableOpacity style={styles.rightIcon} onPress={() => navigateToScreen('Community')}>
         <Ionicons name="chatbubble-outline" size={24} color="black" />
       </TouchableOpacity>
     </View>
