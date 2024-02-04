@@ -25,6 +25,17 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
+const getALLUser=async(req,res)=>{
+    try{
+
+        const users=await User.find();
+
+        res.status(200).json({users:users})
+    }catch{
+          console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
 
 const getFollowers_FollowingByUserID = async (req, res) => {
@@ -660,7 +671,8 @@ module.exports = {
     resendVerificatoin,
     resetPassword,
     sendResetPasswordEmail,
-    getFollowers_FollowingByUserID
+    getFollowers_FollowingByUserID,
+    getALLUser
 
 
 }
